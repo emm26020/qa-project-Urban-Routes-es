@@ -26,16 +26,10 @@ qa-project-Urban-Routes-es/
    cd qa-project-Urban-Routes-es
    ```
 
-2. **Configurar el entorno**:
-   Asegúrate de tener instalado Python (versión 3.7 o superior). Instala las dependencias necesarias utilizando:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Configurar el archivo `data.py`**:
+2. **Configurar el archivo `data.py`**:
    Modifica el archivo `data.py` para incluir la URL de la aplicación y otros datos relevantes como direcciones o números de teléfono para las pruebas.
 
-4. **Ejecutar las pruebas**:
+3. **Ejecutar las pruebas**:
    Ejecuta las pruebas usando `pytest`:
    ```bash
    pytest tests/test_urban_routes.py
