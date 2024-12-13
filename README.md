@@ -23,7 +23,6 @@ qa-project-Urban-Routes-es/
 1. **Clonar el repositorio**:
    ```bash
    git clone <url_del_repositorio>
-   cd qa-project-Urban-Routes-es
    ```
 
 2. **Configurar el archivo `data.py`**:
