@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from pages import UrbanRoutesAutomation
+from helpers import retrieve_phone_code
 
 class TestUrbanRoutes:
     driver = None
@@ -33,26 +34,46 @@ class TestUrbanRoutes:
         route_page.click_taxi_button()
 
     def test_select_comfort(self):
-        WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.XPATH, ".//*[text()='Comfort']")))
-        travel_method = UrbanRoutesAutomation.ComfortMethod(self.driver)
-        travel_method.select_comfort()
-        assert travel_method.return_status_trip() == True
+        comfort_method = UrbanRoutesAutomation.ComfortMethod(self.driver)
+        WebDriverWait(self.driver, 5).until(expected_conditions.element_to_be_clickable(UrbanRoutesAutomation.UrbanRoutesPage.comfort_button))
+        comfort_method.select_comfort()
+        assert comfort_method.return_status_trip() == True, "La tarifa Comfort no fue seleccionada correctamente."
 
     def test_click_phone_area(self):
-        WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable(
+        WebDriverWait(self.driver, 5).until(expected_conditions.element_to_be_clickable(
             (By.XPATH, "//div[contains(@class, 'np-text') and text()='Número de teléfono']")))
         route_page = UrbanRoutesAutomation.UrbanRoutesPage(self.driver)
         route_page.click_phone_area_button()
 
-    def test_select_phone_number(self):
-        WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.ID, "phone")))
-        send_phone = UrbanRoutesAutomation.AddPhoneNumber(self.driver)
-        new_phone = data.phone_number
-        send_phone.send_phone_number(new_phone)
-        WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable((By.ID, "code")))
-        self.driver.find_element(By.ID, "code").send_keys(UrbanRoutesAutomation.retrieve_phone_code(self.driver))
-        self.driver.find_element(By.XPATH, ".//*[text()='Confirmar']").click()
-        assert send_phone.return_phone_number() == new_phone
+    def test_click_phone_area(self):
+        """Prueba para hacer clic en el área de número de teléfono."""
+        WebDriverWait(self.driver, 5).until(expected_conditions.element_to_be_clickable(
+            (By.XPATH, "//div[contains(@class, 'np-text') and text()='Número de teléfono']")))
+        route_page = UrbanRoutesAutomation.UrbanRoutesPage(self.driver)
+        route_page.click_phone_area_button()
+
+    def test_add_phone_number(self):
+        phone_section = UrbanRoutesAutomation.AddPhoneNumber(self.driver)
+        WebDriverWait(self.driver, 5).until(
+            expected_conditions.element_to_be_clickable(UrbanRoutesAutomation.UrbanRoutesPage.phone_area_button)
+        )
+        phone_section.send_phone_number(data.phone_number)
+        WebDriverWait(self.driver, 5).until(expected_conditions.element_to_be_clickable((By.ID, "code")))
+        self.driver.find_element(By.ID, "code").send_keys(retrieve_phone_code(self.driver))  # Actualizado
+        self.driver.find_element(By.XPATH, "//button[text()='Confirmar']").click()
+        assert phone_section.return_phone_number() == data.phone_number, "El número de teléfono no coincide."
+
+    def test_add_credit_card(self):
+        add_card = UrbanRoutesAutomation.AddCreditCard(self.driver)
+
+        # Hacer clic en el botón de metodo de pago
+        add_card.click_payment_method_button()
+
+        # Hacer clic en "Agregar tarjeta"
+        add_card.click_add_card_button()
+
+        # Ingresar detalles de la tarjeta
+        add_card.enter_card_details(data.card_number, data.card_code)
 
     def test_write_message(self):
         message = data.message_for_driver
@@ -60,16 +81,18 @@ class TestUrbanRoutes:
         write_message.write_new_message(message)
         assert write_message.return_message() == message
 
-    def test_ask_for_blanket(self):
-        blanket = UrbanRoutesAutomation.AskBlanket(self.driver)
-        blanket.ask_blanket()
-        assert blanket.return_status_blanket() == True
+    def test_select_blanket(self):
+        blanket_section = UrbanRoutesAutomation.AskBlanket(self.driver)
+        blanket_section.ask_blanket()
+        assert blanket_section.return_status_blanket(), "La opción de manta no fue seleccionada."
 
-    def test_order_ice_cream(self):
-        ice_cream = UrbanRoutesAutomation.IceCreamOrder(self.driver)
-        ice_cream.add_ice_cream()
-        assert ice_cream.return_ice_cream_count() == "2"
+    def test_add_ice_cream(self):
+        ice_cream_section = UrbanRoutesAutomation.IceCreamOrder(self.driver)
+        ice_cream_section.add_ice_cream()
+        assert ice_cream_section.return_ice_cream_count() == "2", "No se agregaron 2 helados correctamente."
 
     def test_final_button_enabled(self):
-        final_button = UrbanRoutesAutomation.FinalButton(self.driver)
-        assert final_button.is_final_button_enabled() == True
+        final_section = UrbanRoutesAutomation.FinalButton(self.driver)
+        WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable(UrbanRoutesAutomation.UrbanRoutesPage.final_button))
+        assert final_section.is_final_button_enabled(), "El botón final no está habilitado."
+
