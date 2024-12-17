@@ -33,4 +33,6 @@ qa-project-Urban-Routes-es/
    ```bash
    pytest tests/test_urban_routes.py
    ```
-   
+   Autor
+Nombre: Emmanuel Carvajal
+Cohort: 18
