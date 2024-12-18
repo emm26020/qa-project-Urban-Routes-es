@@ -75,6 +75,17 @@ class TestUrbanRoutes:
         # Ingresar detalles de la tarjeta
         add_card.enter_card_details(data.card_number, data.card_code)
 
+        # Validar que la tarjeta se haya agregado correctamente
+        try:
+            payment_method_text = WebDriverWait(self.driver, 10).until(
+                expected_conditions.visibility_of_element_located((By.CLASS_NAME, "pp-value-text"))
+            )
+            assert payment_method_text.text == "Tarjeta", "El método de pago no cambió a 'Tarjeta' tras agregar la tarjeta."
+            print("La tarjeta fue agregada correctamente.")
+        except Exception as e:
+            print(f"Error al validar el cambio del método de pago: {e}")
+            raise
+
     def test_write_message(self):
         message = data.message_for_driver
         write_message = UrbanRoutesAutomation.SendNewMessage(self.driver)
@@ -82,17 +93,26 @@ class TestUrbanRoutes:
         assert write_message.return_message() == message
 
     def test_select_blanket(self):
+        """Valida que el checkbox de manta se seleccione correctamente."""
         blanket_section = UrbanRoutesAutomation.AskBlanket(self.driver)
         blanket_section.ask_blanket()
-        assert blanket_section.return_status_blanket(), "La opción de manta no fue seleccionada."
+
+        # Verifica que el checkbox está seleccionado
+        assert blanket_section.return_status_blanket(), "La opción de manta no fue seleccionada correctamente."
 
     def test_add_ice_cream(self):
         ice_cream_section = UrbanRoutesAutomation.IceCreamOrder(self.driver)
         ice_cream_section.add_ice_cream()
         assert ice_cream_section.return_ice_cream_count() == "2", "No se agregaron 2 helados correctamente."
 
-    def test_final_button_enabled(self):
-        final_section = UrbanRoutesAutomation.FinalButton(self.driver)
-        WebDriverWait(self.driver, 10).until(expected_conditions.element_to_be_clickable(UrbanRoutesAutomation.UrbanRoutesPage.final_button))
-        assert final_section.is_final_button_enabled(), "El botón final no está habilitado."
-
+    def test_taxi_modal_is_displayed(self):
+        """Valida si el modal para pedir un taxi se despliega correctamente."""
+        WebDriverWait(self.driver, 10).until(
+            expected_conditions.text_to_be_present_in_element(
+                UrbanRoutesAutomation.UrbanRoutesPage.order_taxi_modal_title,
+                "Pedir un taxi"
+            )
+        )
+        assert "Pedir un taxi" in self.driver.find_element(
+            *UrbanRoutesAutomation.UrbanRoutesPage.order_taxi_modal_title
+        ).text, "El modal para pedir un taxi no se desplegó correctamente."

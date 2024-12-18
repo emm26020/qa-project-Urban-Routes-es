@@ -25,11 +25,15 @@ class UrbanRoutesAutomation:
         phone_displayed_text = (By.CLASS_NAME, 'np-text')  # Adición: Verificar número de teléfono mostrado
         next_button = (By.XPATH, ".//div[@class='buttons']/button[@class='button full']")
         comment_space = (By.CSS_SELECTOR, "#comment")
+        checkbox_blanket = (By.CSS_SELECTOR, "input.switch-input")  # Localizador actualizado
+
         ask_blanket_button = (By.XPATH, "//div[@class='r-sw-container']/div[@class='r-sw']/div[@class='switch']")
+        blanket_slider = (By.CSS_SELECTOR, "span.slider.round")
         ice_cream_plus_button = (By.CSS_SELECTOR, ".counter-plus")
         ice_cream_count = (By.CSS_SELECTOR, ".counter-value")
         final_button = (By.CSS_SELECTOR, ".smart-button-secondary")
-        order_taxi_modal_title = (By.CLASS_NAME, 'order-header-title')  # Adición: Verificar despliegue del modal
+        order_taxi_modal_title = (By.XPATH, "//span[@class='smart-button-main']")
+  # Adición: Verificar despliegue del modal
         add_card_button = (By.XPATH, "//div[contains(@class, 'pp-title') and text()='Agregar tarjeta']")
         card_number_field = (By.ID, 'number')  # Actualización: Campo para número de tarjeta
         card_code_field = (By.XPATH, "//input[@id='code' and contains(@class, 'card-input')]")
@@ -188,10 +192,19 @@ class UrbanRoutesAutomation:
             self.driver = driver
 
         def ask_blanket(self):
-            self.driver.find_element(*UrbanRoutesAutomation.UrbanRoutesPage.ask_blanket_button).click()
+            """Hace clic en el control visual (slider) para seleccionar la manta."""
+            slider = self.driver.find_element(By.CSS_SELECTOR, "span.slider.round")
+            checkbox = self.driver.find_element(*UrbanRoutesAutomation.UrbanRoutesPage.checkbox_blanket)
+
+            # Clic en el slider si el checkbox no está seleccionado
+            if not checkbox.is_selected():
+                slider.click()
+                WebDriverWait(self.driver, 5).until(lambda d: checkbox.is_selected())
 
         def return_status_blanket(self):
-            return self.driver.find_element(*UrbanRoutesAutomation.UrbanRoutesPage.ask_blanket_button).is_displayed()
+            """Retorna si el checkbox de manta está seleccionado."""
+            checkbox = self.driver.find_element(*UrbanRoutesAutomation.UrbanRoutesPage.checkbox_blanket)
+            return checkbox.is_selected()
 
     class IceCreamOrder:
         def __init__(self, driver):
