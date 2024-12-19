@@ -107,12 +107,17 @@ class TestUrbanRoutes:
 
     def test_taxi_modal_is_displayed(self):
         """Valida si el modal para pedir un taxi se despliega correctamente."""
+        # Hacer clic en el botón de reserva
+        reserve_button = self.driver.find_element(*UrbanRoutesAutomation.UrbanRoutesPage.reserve_button)
+        reserve_button.click()
+
+        # Esperar a que el modal esté visible
         WebDriverWait(self.driver, 10).until(
-            expected_conditions.text_to_be_present_in_element(
-                UrbanRoutesAutomation.UrbanRoutesPage.order_taxi_modal_title,
-                "Pedir un taxi"
+            expected_conditions.visibility_of_element_located(
+                UrbanRoutesAutomation.UrbanRoutesPage.order_taxi_modal_title
             )
         )
-        assert "Pedir un taxi" in self.driver.find_element(
-            *UrbanRoutesAutomation.UrbanRoutesPage.order_taxi_modal_title
-        ).text, "El modal para pedir un taxi no se desplegó correctamente."
+
+        # Validar que el modal está visible
+        modal_title = self.driver.find_element(*UrbanRoutesAutomation.UrbanRoutesPage.order_taxi_modal_title)
+        assert modal_title.is_displayed(), "El modal para pedir un taxi no se desplegó correctamente."

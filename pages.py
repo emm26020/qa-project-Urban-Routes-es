@@ -32,7 +32,7 @@ class UrbanRoutesAutomation:
         ice_cream_plus_button = (By.CSS_SELECTOR, ".counter-plus")
         ice_cream_count = (By.CSS_SELECTOR, ".counter-value")
         final_button = (By.CSS_SELECTOR, ".smart-button-secondary")
-        order_taxi_modal_title = (By.XPATH, "//span[@class='smart-button-main']")
+        order_taxi_modal_titl = (By.XPATH, "//span[@class='smart-button-main']")
   # Adición: Verificar despliegue del modal
         add_card_button = (By.XPATH, "//div[contains(@class, 'pp-title') and text()='Agregar tarjeta']")
         card_number_field = (By.ID, 'number')  # Actualización: Campo para número de tarjeta
@@ -43,6 +43,8 @@ class UrbanRoutesAutomation:
         close_modal_button = (By.XPATH, "(//button[@class='close-button section-close'])[3]")
 
         payment_method_button = (By.XPATH, "//div[contains(@class, 'pp-button filled')]")
+        reserve_button = (By.CLASS_NAME, "smart-button")
+        order_taxi_modal_title = (By.CLASS_NAME, "order-header-title")
 
 
         def __init__(self, driver):
